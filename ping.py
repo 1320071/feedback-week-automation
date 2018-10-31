@@ -28,7 +28,7 @@ def scan(host):
     print "Scanning " + host
     scanner = nmap.PortScanner()
     scanner.scan(host, arguments="-sV -O --script vuln")
-    nmapParse.scanParse(scanner[host], host + "/nmap.txt")
+	return scanner[host]
 
 # Uses rpcclient to enumerate for dom users
 # Writes list of users to host/users.txt
@@ -42,6 +42,7 @@ def rpcEnumDomUsers(host):
     os.system("mkdir " + host + "/users")
     for user in users:
         rpcQueryUser(host, user)
+    return usersn  
 
 # Uses rpcclient to enumerate info about individual users
 # Writes the info to host/users/user.txt
@@ -102,8 +103,11 @@ if __name__ == "__main__":
     hosts = sys.argv[1:]
     for host in hosts:
         if ping(host):
+			# init html out
             os.system("mkdir " + host)
-            scan(host)
+
+            nmapOutput = scan(host)
+
             rpcEnumDomUsers(host)
             rpcEnumGroups(host)
             getUserGroupNames(host)
