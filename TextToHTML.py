@@ -1,7 +1,9 @@
+# *** Created by Mairi McQueer, Ben Gilmour & Sam Heney *** #
+
 import yattag
 
-def scanParse(nmapOutput, fileName):
-    log = open(fileName, 'wb')
+def scanParse(nmapOutput, fileName): 
+    log = open(fileName, 'wb') 
 	doc,tag,text = yattag.Doc().tagtext()
 	doc.asis('<!DOCTYPE html>') 
 
@@ -16,73 +18,55 @@ def scanParse(nmapOutput, fileName):
 			with tag('div', id='NMAP'):
 				line('h2', 'NMAP')	
 				line('h3', 'Status')
-				line('p', 'Status: ' + nmapOutput['status']['state'])
+				line('p', 'Status: ' + nmapOutput['status']['state']) 
 				line('p', 'Reason: ' + nmapOutput['status']['reason'])
 				
 				line('h3', 'Uptime')
-				line('p', 'Seconds: " + nmapOutput['uptime']['seconds']')
-				line('p', 'Last Boot: " + nmapOutput['uptime']['lastboot']')
+				line('p', 'Seconds: ' + nmapOutput['uptime']['seconds']')
+				line('p', 'Last Boot: ' + nmapOutput['uptime']['lastboot']')
 
 				line('h3', 'Adresses')
-				line('p', 'Mac: " + nmapOutput['addresses']['mac']')
-				line('p', 'Ipv4: " + nmapOutput['addresses']['ipv4']')
+				line('p', 'Mac: ' + nmapOutput['addresses']['mac']')
+				line('p', 'Ipv4: ' + nmapOutput['addresses']['ipv4']')
 
 				line('h3', 'Host Vulnerabilities')
  				for vuln in nmapOutput['hostscript']:
-					line('p','vuln['output']')
+					line('p',vuln['output'])
 				
 				line('h3', 'Ports') 
-				with tag('table')
-					with tag('tr')
-						line('td', 'Port Number')
-						line('td', 'Service')
-						line('td', 'Version')
-					
-					with tag('tr') # TODO fix
+				with tag('table') 
+					with tag('tr') # TODO test - does Yattag allow for python loops/statements to be intergrated like this?
 						for port in nmapOutput['tcp']:
 	        				line('td', 'str(port)')
 	        				line('td', nmapOutput['tcp'][port]['name'])
-
-	        				if len(nmapOutput['tcp'][port]['name']) < 8:
-	            				log.write("\t") # Wat?
-	        					log.write("\t")
+	        				
+							if len(nmapOutput['tcp'][port]['name']) < 8:
+	            				# Need two tabs here so trying <pre> but not sure it will work...
+								line('pre','    ') 
+								line('pre','    ')
 	        				try:
 	            				for vuln in nmapOutput['tcp'][port]['script']:
 	                				if 'VULNERABLE' in nmapOutput['tcp'][port]['script'][vuln]:
-	                    				log.write(vuln + ":" + "\n")
-	                    				log.write(nmapOutput['tcp'][port]['script'][vuln] + "\n")
+	                    				line('p',vuln + ":" )
+	                    				line('p',nmapOutput['tcp'][port]['script'][vuln])
 	        				except:
 	            				pass
-	
-			
-		
-def scanParse(nmapOutput, fileName):
-	# Depricated function. This is being used as a template for html above
-	# log.write == data to be added to html
-
-    log.write("\n")
-    log.write("Host Vulnerabilities: " + "\n")
-    for vuln in nmapOutput['hostscript']:
-        log.write(vuln['output'] + "\n")
-
-    log.write("\n")
-    log.write("Ports:" + "\n")
-    for port in nmapOutput['tcp']:
-        log.write(str(port))
-        log.write("\t")
-        log.write(nmapOutput['tcp'][port]['name'])
-        if len(nmapOutput['tcp'][port]['name']) < 8:
-            log.write("\t")
-        log.write("\t")
-        try:
-            for vuln in nmapOutput['tcp'][port]['script']:
-                if 'VULNERABLE' in nmapOutput['tcp'][port]['script'][vuln]:
-                    log.write(vuln + ":" + "\n")
-                    log.write(nmapOutput['tcp'][port]['script'][vuln] + "\n")
-        except:
-            pass
-        log.write("\n")
-    
-    log.write("\n")
-    log.write("Hostnames:" + "\n")
-    for hostname in nmapOutput['hostnames']:
+				
+				line('h3','Hostnames')
+				for hostname in nmapOutput['hostnames']: 
+					if hostname['type']:
+						line('p', 'Type: ' + hostname['type'])
+						line('p', 'Name: ' + hostname['name'])
+				
+				line('h3','OS Match')
+				for osmatch in scan['osmatch']:
+					line('p','----------')
+					line('p','Family: ' + osclass['osfamily'])
+					line('p','Vendor: ' + osclass['vendor']))
+					line('p','Type: ' + osclass['type'])
+					line('p','OS Generation' + osclass['osgen'])
+					line('p','Accuracy' + osclass['accuracy'])
+					
+	 log.write(doc.getvalue())
+					
+						
